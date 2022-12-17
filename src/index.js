@@ -1,5 +1,7 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import axios from 'axios';
+import { Notify } from 'notiflix';
 
 const searchBtn = document.querySelector('.search-btn');
 const searchInput = document.querySelector('[name="searchQuery"]');
@@ -9,33 +11,25 @@ const API_KEY = '32144647-959c857bfd1217eb2ae7a3cc9';
 
 searchBtn.addEventListener('click', e => {
   e.preventDefault();
-
-  const query = searchInput.value;
-  fetchImages(query).then(foundData => {
-    renderImageList(foundData.hits);
-    onSimpleLightBox();
-  });
+  getImagesAxios({ query: searchInput.value });
 });
 
-const fetchImages = async query => {
+async function getImagesAxios({ query }) {
   const urlAPI = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true`;
-
-  return await fetch(urlAPI)
-    .then(async res => {
-      if (!res.ok) {
-        if (res.status === 404) {
-          return [];
-        }
-        throw new Error(res.status);
-      }
-
-      return await res.json();
-    })
-
-    .catch(error => {
-      console.log(error);
-    });
-};
+  try {
+    const resAxios = await axios.get(urlAPI).then(res => res.data.hits);
+    if (resAxios.length === 0) {
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again'
+      );
+      return;
+    }
+    renderImageList(resAxios);
+    onSimpleLightBox();
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 function renderImageList(images) {
   galleryField.innerHTML = '';
