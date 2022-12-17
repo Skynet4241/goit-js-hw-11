@@ -1,3 +1,6 @@
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 const searchBtn = document.querySelector('.search-btn');
 const searchInput = document.querySelector('[name="searchQuery"]');
 const galleryField = document.querySelector('.gallery');
@@ -6,8 +9,12 @@ const API_KEY = '32144647-959c857bfd1217eb2ae7a3cc9';
 
 searchBtn.addEventListener('click', e => {
   e.preventDefault();
+
   const query = searchInput.value;
-  fetchImages(query).then(foundData => renderImageList(foundData.hits));
+  fetchImages(query).then(foundData => {
+    renderImageList(foundData.hits);
+    onSimpleLightBox();
+  });
 });
 
 const fetchImages = async query => {
@@ -54,4 +61,11 @@ function renderImageList(images) {
     })
     .join('');
   galleryField.insertAdjacentHTML('beforeend', imagesList);
+}
+
+function onSimpleLightBox() {
+  new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
 }
