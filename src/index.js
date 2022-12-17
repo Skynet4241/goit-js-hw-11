@@ -11,6 +11,7 @@ const API_KEY = '32144647-959c857bfd1217eb2ae7a3cc9';
 
 searchBtn.addEventListener('click', e => {
   e.preventDefault();
+  galleryField.innerHTML = '';
   getImagesAxios({ query: searchInput.value });
 });
 
@@ -32,7 +33,6 @@ async function getImagesAxios({ query }) {
 }
 
 function renderImageList(images) {
-  galleryField.innerHTML = '';
   const imagesList = images
     .map(image => {
       return `<div class="photo-card">
