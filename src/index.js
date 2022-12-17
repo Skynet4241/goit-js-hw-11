@@ -2,7 +2,6 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import axios from 'axios';
 import { Notify } from 'notiflix';
-import simpleLightbox from 'simplelightbox';
 
 const searchBtn = document.querySelector('.search-btn');
 const searchInput = document.querySelector('[name="searchQuery"]');
@@ -34,11 +33,10 @@ async function getImagesAxios({ query }) {
         } else {
           renderImageList(res.data.hits);
 
-          calculatePagination(res.data.totalHits);
           Notify.success(`Hooray! We found ${res.data.totalHits} images.`);
           btnLoadMore.style.display = 'block';
-          onSimpleLightBox();
-
+          simpleLightBox.refresh();
+          calculatePagination(res.data.totalHits);
           return res.data.hits;
         }
       });
@@ -73,21 +71,32 @@ function renderImageList(images) {
   galleryField.insertAdjacentHTML('beforeend', imagesList);
 }
 
-function onSimpleLightBox() {
-  new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-    captionDelay: 250,
-  });
-}
+// function onSimpleLightBox() {
+//   new SimpleLightbox('.gallery a', {
+//     captionsData: 'alt',
+//     captionDelay: 250,
+//   });
+// }
+
+const simpleLightBox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+  scrollZoom: false,
+});
 
 function calculatePagination(totalHits) {
   totalPages = Math.ceil(totalHits / pageSize);
+  if (totalPages <= 1) {
+    btnLoadMore.style.display = 'none';
+  }
+
   //   console.log(totalPages);
 }
 
-btnLoadMore.addEventListener('click', e => {
+btnLoadMore.addEventListener('click', () => {
   currentPage += 1;
   //   btnLoadMore.style.display = 'none';
+
   getImagesAxios({ query: searchInput.value }).then(response => {
     renderImageList(response);
   });
