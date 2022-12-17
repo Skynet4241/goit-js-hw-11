@@ -54,3 +54,23 @@ button {
 .info-item-api {
   padding-top: 5px;
 }
+
+.load-more {
+  display: block;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  background-color: #4056b4;
+  border: none;
+  border-radius: 2px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  font-size: large;
+  &:hover {
+    background-color: #188ce8;
+  }
+  &:focus {
+    background-color: #188ce8;
+  }
+}

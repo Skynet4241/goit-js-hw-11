@@ -2,31 +2,46 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import axios from 'axios';
 import { Notify } from 'notiflix';
+import simpleLightbox from 'simplelightbox';
 
 const searchBtn = document.querySelector('.search-btn');
 const searchInput = document.querySelector('[name="searchQuery"]');
 const galleryField = document.querySelector('.gallery');
+const btnLoadMore = document.querySelector('.load-more');
 
 const API_KEY = '32144647-959c857bfd1217eb2ae7a3cc9';
+let currentPage = 1;
+const pageSize = 40;
+let totalPages = undefined;
+
+btnLoadMore.style.display = 'none';
 
 searchBtn.addEventListener('click', e => {
   e.preventDefault();
   galleryField.innerHTML = '';
-  getImagesAxios({ query: searchInput.value });
+  getImagesAxios({ query: searchInput.value }, currentPage);
 });
 
 async function getImagesAxios({ query }) {
-  const urlAPI = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true`;
+  const urlAPI = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${currentPage}&per_page=${pageSize}`;
   try {
-    const resAxios = await axios.get(urlAPI).then(res => res.data.hits);
-    if (resAxios.length === 0) {
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again'
-      );
-      return;
+    if (query !== '') {
+      return await axios.get(urlAPI).then(res => {
+        if (res.data.hits.length === 0) {
+          Notify.failure(
+            'Sorry, there are no images matching your search query. Please try again'
+          );
+        } else {
+          renderImageList(res.data.hits);
+
+          //   calculatePagination(res.data.totalHits);
+          Notify.success(`Hooray! We found ${res.data.totalHits} images.`);
+          btnLoadMore.style.display = 'block';
+          onSimpleLightBox();
+          //   return res.data.hits;
+        }
+      });
     }
-    renderImageList(resAxios);
-    onSimpleLightBox();
   } catch (error) {
     console.log(error);
   }
@@ -63,3 +78,16 @@ function onSimpleLightBox() {
     captionDelay: 250,
   });
 }
+
+function calculatePagination(totalHits) {
+  totalPages = Math.ceil(totalHits / pageSize);
+  //   console.log(totalPages);
+}
+
+btnLoadMore.addEventListener('click', e => {
+  currentPage += 1;
+  btnLoadMore.style.display = 'none';
+  getImagesAxios({ query: searchInput.value }).then(response => {
+    renderImageList(response);
+  });
+});
