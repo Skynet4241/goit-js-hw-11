@@ -34,11 +34,12 @@ async function getImagesAxios({ query }) {
         } else {
           renderImageList(res.data.hits);
 
-          //   calculatePagination(res.data.totalHits);
+          calculatePagination(res.data.totalHits);
           Notify.success(`Hooray! We found ${res.data.totalHits} images.`);
           btnLoadMore.style.display = 'block';
           onSimpleLightBox();
-          //   return res.data.hits;
+
+          return res.data.hits;
         }
       });
     }
@@ -86,7 +87,7 @@ function calculatePagination(totalHits) {
 
 btnLoadMore.addEventListener('click', e => {
   currentPage += 1;
-  btnLoadMore.style.display = 'none';
+  //   btnLoadMore.style.display = 'none';
   getImagesAxios({ query: searchInput.value }).then(response => {
     renderImageList(response);
   });
