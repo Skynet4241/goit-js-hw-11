@@ -32,8 +32,10 @@ async function getImagesAxios({ query }) {
           );
         } else {
           renderImageList(res.data.hits);
+          if (currentPage == 1) {
+            Notify.success(`Hooray! We found ${res.data.totalHits} images.`);
+          }
 
-          Notify.success(`Hooray! We found ${res.data.totalHits} images.`);
           btnLoadMore.style.display = 'block';
           simpleLightBox.refresh();
           calculatePagination(res.data.totalHits);
@@ -88,16 +90,24 @@ function calculatePagination(totalHits) {
   totalPages = Math.ceil(totalHits / pageSize);
   if (totalPages <= 1) {
     btnLoadMore.style.display = 'none';
+  } else if (currentPage == totalPages) {
+    reachedEndSearch();
   }
-
-  //   console.log(totalPages);
 }
 
 btnLoadMore.addEventListener('click', () => {
   currentPage += 1;
-  //   btnLoadMore.style.display = 'none';
-
   getImagesAxios({ query: searchInput.value }).then(response => {
     renderImageList(response);
   });
 });
+
+function reachedEndSearch() {
+  setTimeout(() => {
+    Notify.warning(
+      `We're sorry, but you've reached the end of search results.`
+    );
+  }, 3000);
+
+  btnLoadMore.style.display = 'none';
+}
