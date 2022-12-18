@@ -17,6 +17,7 @@ btnLoadMore.style.display = 'none';
 
 searchBtn.addEventListener('click', e => {
   e.preventDefault();
+  btnLoadMore.style.display = 'none';
   galleryField.innerHTML = '';
   getImagesAxios({ query: searchInput.value }, currentPage);
 });
@@ -97,6 +98,7 @@ function calculatePagination(totalHits) {
 
 btnLoadMore.addEventListener('click', () => {
   currentPage += 1;
+
   getImagesAxios({ query: searchInput.value }).then(response => {
     renderImageList(response);
   });
