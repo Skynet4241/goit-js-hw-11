@@ -21,10 +21,9 @@ button {
   flex-wrap: wrap;
   justify-content: center;
   margin: 20px 25px;
+  gap: 20px;
 }
-.photo-card {
-  margin-right: 20px;
-}
+
 .info {
   display: flex;
   align-items: center;
@@ -32,7 +31,7 @@ button {
   justify-items: center;
   width: 350px;
   font-size: 14px;
-  margin-bottom: 20px;
+
   border: 1px solid #c3c2c2;
 
   border-bottom-left-radius: 5px;
